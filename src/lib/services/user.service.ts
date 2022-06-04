@@ -1,4 +1,4 @@
-import {User} from "../../models/interfaces/user.interface";
+import {User} from "../../models/interfaces/User.interface";
 
 export const getUsers = async () => {
   const response = await fetch("api/users", {
