@@ -18,3 +18,27 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.center{
+  @apply flex justify-center items-center;
+}
+
+.no-outline{
+  @apply outline-none focus:outline-none;
+}
+
+.form-input {
+  @apply no-outline border-2 border-transparent bg-gray-100 px-4 py-2 rounded-md;
+}
+
+.form-input-error {
+  @apply no-outline border-2 border-red px-4 py-2 rounded-md bg-gray-100;
+}
+
+.form-input-label{
+  @apply text-accent font-bold;
+}
+
+.form-text-area{
+  @apply no-outline px-4 py-2 rounded-md bg-gray-100 resize-none border-2 border-transparent
+}
