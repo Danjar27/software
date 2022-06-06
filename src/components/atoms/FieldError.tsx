@@ -1,4 +1,4 @@
-import {Option} from "../../models/interfaces/Select.interface";
+import {Option} from "../../models/Select.interface";
 
 const FieldError = (message: string|Option<any>) => {
 
