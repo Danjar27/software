@@ -24,7 +24,7 @@ const UserList = () => {
   return (
     <div>
       {users?.map((item, index) => (
-        <UserCard key={index} {...item} />
+        <UserCard key={index} user={item} />
       ))}
     </div>
   );
