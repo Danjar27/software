@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { firebaseDB } from "../../lib/firebase.config";
-import { getUsers } from "../../lib/services/user.service";
 import { Collections } from "../../models/Collections.interface";
 import { collection, query, onSnapshot } from "@firebase/firestore";
 import UserCard from "../organisms/UserCard";
