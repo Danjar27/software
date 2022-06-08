@@ -1,13 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import FormInput from "../molecules/FormInput";
 import { User } from "../../models/User.interface";
-import { addUser, getUsers } from "../../lib/services/user.service";
+import {
+  addUser,
+  getUserByUid,
+  getUsers,
+} from "../../lib/services/user.service";
 import RoundedButton from "../atoms/RoundedButton";
 import { UserSchema } from "../../models/schemas/User.schema";
 import FormPhotoInput from "../molecules/FormPhotoInput";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../store/hook";
+import { AuthStore } from "../../store/authStore";
 
 const UserFormRoot = observer(() => {
   const initialValues: User = {
@@ -17,28 +22,46 @@ const UserFormRoot = observer(() => {
     dni: undefined,
     birthDate: undefined,
   };
-
+  const [formValues, setFormValues] = useState<User>(initialValues);
+  const [alreadyExists, setAlreadyExists] = useState<boolean>(false);
   const { user } = useStore("userStore");
+  const { auth } = useStore("authStore");
 
   const handleSubmit = async (
     values: User,
     { resetForm }: { resetForm: () => void }
   ) => {
-    await addUser(values);
-    resetForm();
+    await addUser({ ...values, uid: auth.uid });
   };
 
   const formIsTouched = (values: Record<string, boolean>) => {
     return Object.keys(values).length > 0;
   };
 
+  useEffect(() => {
+    let mounted = true;
+    if (mounted) {
+      (async () => {
+        const user = await getUserByUid(auth?.uid);
+        if (user) {
+          setFormValues(user as any);
+          setAlreadyExists(true);
+        }
+      })();
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [auth]);
+
   return (
     <Formik<User>
-      initialValues={initialValues}
+      enableReinitialize={true}
+      initialValues={formValues as User}
       onSubmit={handleSubmit}
       validationSchema={UserSchema}
     >
-      {({ submitForm, isValid, touched }) => (
+      {({ submitForm, isValid, touched, values }) => (
         <section data-testid="form" className="center w-[600px] flex-col">
           <div className="center">
             <FormPhotoInput name="photo_url" />
@@ -55,23 +78,28 @@ const UserFormRoot = observer(() => {
           </div>
           <div className="w-full gap-5 flex">
             <div className="w-1/2">
-              <FormInput name="dni" label="Cédula:" />
+              <FormInput name="dni" label="Cédula:" value={values?.dni} />
             </div>
             <div className="w-1/2">
               <FormInput
                 name="birthDate"
                 type="date"
                 label="Fecha de Nacimiento:"
+                value={values?.birthDate as string}
               />
             </div>
           </div>
-          <RoundedButton
-            disabled={!isValid || !formIsTouched(touched)}
-            customColor="bg-accent"
-            className="rounded-lg"
-            text="Registrarse"
-            onClick={submitForm}
-          />
+          <div className="mt-10 w-full">
+            <RoundedButton
+              disabled={
+                !isValid || (!formIsTouched(touched) && !values.photo_url)
+              }
+              customColor="bg-accent"
+              className="rounded-lg"
+              text={alreadyExists ? "Actualizar" : "Guardar"}
+              onClick={submitForm}
+            />
+          </div>
         </section>
       )}
     </Formik>
