@@ -16,6 +16,7 @@ module.exports = {
         },
         accent: {
           DEFAULT: "#2F2E41",
+          light: "#454057",
         },
         red: {
           DEFAULT: "#E71D36",
@@ -29,5 +30,8 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar")],
+  variants: {
+    scrollbar: ["rounded"],
+  },
 };
