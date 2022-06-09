@@ -24,14 +24,13 @@ const UserFormRoot = observer(() => {
   };
   const [formValues, setFormValues] = useState<User>(initialValues);
   const [alreadyExists, setAlreadyExists] = useState<boolean>(false);
-  const { user } = useStore("userStore");
+  const [loading, setLoading] = useState<boolean>(false);
   const { auth } = useStore("authStore");
 
-  const handleSubmit = async (
-    values: User,
-    { resetForm }: { resetForm: () => void }
-  ) => {
+  const handleSubmit = async (values: User) => {
+    setLoading(true);
     await addUser({ ...values, uid: auth.uid });
+    setLoading(false);
   };
 
   const formIsTouched = (values: Record<string, boolean>) => {
@@ -52,7 +51,7 @@ const UserFormRoot = observer(() => {
     return () => {
       mounted = false;
     };
-  }, [auth]);
+  }, [auth, loading]);
 
   return (
     <Formik<User>
